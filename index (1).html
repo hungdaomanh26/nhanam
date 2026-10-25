@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HMI · Nhà nấm</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{--ink:#e6f4f1;--mut:#8fb3ad;--bd:#ffffff17;--ac:#2dd4bf;--t:#fbbf68;--h:#5ccbff;--ok:#34d399;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;color:var(--ink);font:14px/1.5 Inter,system-ui,sans-serif;min-height:100vh;background:radial-gradient(1100px 600px at 90% -10%,#0f4a3f,transparent 60%),radial-gradient(900px 500px at -10% 110%,#0a3b44,transparent 55%),#06191a}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background:linear-gradient(#ffffff06 1px,transparent 1px),linear-gradient(90deg,#ffffff06 1px,transparent 1px);background-size:44px 44px}
+.w{position:relative;max-width:1180px;margin:0 auto;padding:26px 18px 90px}
+.card{background:linear-gradient(160deg,#ffffff0e,#ffffff04);border:1px solid var(--bd);border-radius:22px;padding:22px;backdrop-filter:blur(8px);transition:transform .25s,border-color .25s,box-shadow .25s;animation:rise .6s backwards}
+.card:hover{transform:translateY(-3px);border-color:#2dd4bf55;box-shadow:0 14px 40px #0006}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+.row{display:grid;gap:18px;margin-bottom:18px}.r3{grid-template-columns:1fr 1fr 1.7fr}.r4{grid-template-columns:repeat(4,1fr)}.r2{grid-template-columns:1fr 1fr}
+@media(max-width:980px){.r3,.r4{grid-template-columns:1fr 1fr}.r3>:last-child{grid-column:1/-1}.r2{grid-template-columns:1fr}}
+@media(max-width:560px){.r3,.r4{grid-template-columns:1fr}}
+.hd{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.lg{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,#0f766e,#134e4a);box-shadow:0 0 24px #2dd4bf33}
+h1{font-size:21px;margin:0}.hd p{margin:2px 0 0;color:var(--mut);font-size:13px}
+.hr{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.clk{font:700 15px 'JetBrains Mono',monospace;padding:9px 16px;border-radius:14px;background:#ffffff0d;border:1px solid var(--bd)}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:10px 16px;border-radius:99px;background:#ffffff0d;border:1px solid var(--bd);font-weight:600;transition:.3s}
+.pill i{width:9px;height:9px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}.pill.bad i{background:var(--bad);box-shadow:0 0 8px var(--bad)}
+#bn{display:none;margin:-6px 0 18px;padding:10px 16px;border-radius:14px;background:#7f1d1dcc;border:1px solid #ef4444;font-weight:600}
+.m{display:flex;align-items:center;gap:16px}.ic{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:#ffffff0d;border:1px solid var(--bd);flex:none}
+.lb{font-weight:600}.v{font:700 40px/1.1 'JetBrains Mono',monospace}.v span{font-size:18px;color:var(--mut);margin-left:6px}
+.sb{font:11px 'JetBrains Mono',monospace;color:var(--mut)}.tick{animation:tk .4s}@keyframes tk{50%{transform:scale(1.06);opacity:.7}}
+.ring{width:84px;height:84px;margin-left:auto;flex:none}.ring circle{fill:none;stroke-width:7;stroke-linecap:round}.rb{stroke:#ffffff14}.rf{stroke-dasharray:201;stroke-dashoffset:201;transition:stroke-dashoffset .8s,stroke .5s}
+.ch{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.ch b{font-size:15px}.lg2{margin-left:auto;display:flex;gap:14px;font-size:12px;color:var(--mut)}.lg2 i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px}
+.tabs{display:flex;gap:6px}.tabs button,.seg button{border:1px solid var(--bd);background:none;color:var(--mut);border-radius:9px;padding:3px 10px;cursor:pointer;font:inherit;font-size:12px;transition:.2s}
+.tabs button:hover,.seg button:hover{color:var(--ink);border-color:#2dd4bf66}.tabs .act,.seg .act{background:var(--ac);color:#042f2e;border-color:var(--ac);font-weight:700}
+canvas{width:100%;height:230px;display:block}
+.sec{font:700 12px Inter;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center;gap:14px;margin:28px 0 14px}.sec::after{content:"";flex:1;height:1px;background:var(--bd)}
+.dg{overflow-x:auto;padding:14px}.dg svg{min-width:820px;width:100%;display:block}
+.bx{fill:#ffffff09;stroke:#ffffff2a;stroke-width:1.5;transition:.3s}.ld:hover .bx{stroke:#2dd4bf99;fill:#2dd4bf10}
+.nn{fill:#e6f4f1;font:600 12px Inter,sans-serif}.ss{fill:#8fb3ad;font:10px 'JetBrains Mono',monospace}.t1{fill:#cfe8e3;font:700 13px Inter,sans-serif}.tm{fill:#7dd3c0;font:700 12px 'JetBrains Mono',monospace}
+.bus,.wr{fill:none;stroke-width:2.2;stroke-dasharray:7 6}.bus{stroke:#34d399;animation:fl 1s linear infinite}.a1{stroke:#22d3ee}.a2{stroke:#fbbf24}.b2{stroke:#a78bfa}
+.wr{stroke:#475569;stroke-width:2}.wr.on{stroke:var(--ac);animation:fl 1s linear infinite}.disc .bus{animation:none;stroke:#64748b}
+@keyframes fl{to{stroke-dashoffset:-26}}
+.led{fill:#475569;transition:.3s}.led.ok{fill:#34d399;filter:drop-shadow(0 0 4px #34d399)}.led.bad{fill:#ef4444;filter:drop-shadow(0 0 4px #ef4444)}
+.rg{fill:#0b2a2c;stroke:#ffffff30;stroke-width:2}.bl{transform-box:fill-box;transform-origin:center}.bl ellipse{fill:#94a3b8}.ld.on .bl{animation:sp .6s linear infinite}.ld.on .bl ellipse{fill:#5eead4}@keyframes sp{to{transform:rotate(360deg)}}
+.mc{fill:#475569}.ld.on .mc{fill:#38bdf8}.mp{fill:#7dd3fc;opacity:0}.ld.on .mp{animation:rs 1.6s infinite}.ld.on .mp:nth-of-type(2){animation-delay:.5s}.ld.on .mp:nth-of-type(3){animation-delay:1s}@keyframes rs{0%{transform:translateY(6px);opacity:0}30%{opacity:.9}100%{transform:translateY(-18px);opacity:0}}
+.hg{fill:#fbbf24;opacity:0;transition:.4s}.ld.on .hg{opacity:.5}.bulb{fill:#3b3f2e;transition:.4s}.ld.on .bulb{fill:#fbbf24}
+.al{fill:#7f1d1d;transition:.3s}.ld.on .al{fill:#ef4444;animation:bk .7s steps(2) infinite}@keyframes bk{50%{opacity:.25}}
+.dv{display:flex;flex-direction:column;gap:14px}.dv .tp{display:flex;align-items:center;gap:12px}.dv .ic{width:46px;height:46px;font-size:21px;transition:.3s}.dv.on .ic{background:#2dd4bf26;box-shadow:0 0 20px #2dd4bf44}.nm{font-weight:600}
+.sw{position:relative;width:54px;height:30px;border-radius:99px;background:#ffffff1f;border:0;cursor:pointer;transition:.3s;flex:none}.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.3s;box-shadow:0 1px 4px #0006}.sw:hover{filter:brightness(1.2)}.sw.on{background:var(--ok)}.sw.on::after{left:27px}
+.seg{display:flex;gap:6px}.seg button{flex:1;padding:6px}
+form{display:grid;grid-template-columns:1fr 92px;gap:9px;align-items:center}label{color:var(--mut)}
+input{width:100%;padding:7px 9px;border:1px solid var(--bd);border-radius:10px;background:#00000033;color:var(--ink);font:inherit;transition:.2s}input:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px #2dd4bf22}
+.btn{grid-column:1/-1;padding:10px;border:0;border-radius:12px;background:linear-gradient(135deg,#14b8a6,#0d9488);color:#fff;font:700 14px Inter;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px #14b8a655}
+#ev{list-style:none;margin:0;padding:0;font-size:13px}#ev li{padding:7px 0;border-bottom:1px solid var(--bd);animation:rise .4s backwards}#ev span{color:var(--mut);font:11px 'JetBrains Mono',monospace;margin-right:8px}
+a{color:var(--mut)}h3{margin:0 0 12px;font-size:15px}
+body.off .v,body.off .ring,body.off .dv{opacity:.45;filter:grayscale(.6)}
+#err{position:fixed;left:50%;bottom:22px;transform:translate(-50%,30px);opacity:0;pointer-events:none;transition:.4s;z-index:9;padding:10px 20px;border-radius:99px;background:#b91c1c;border:1px solid #fca5a5;font-weight:600;font-size:13px;box-shadow:0 10px 30px #000a}#err.show{opacity:1;transform:translate(-50%,0)}
+#toast{position:fixed;top:18px;right:18px;background:#0f766e;padding:9px 16px;border-radius:12px;opacity:0;transition:.3s;z-index:9}#toast.show{opacity:1}
+.bs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}.bs div{text-align:center;padding:10px;border-radius:14px;background:#ffffff0a;border:1px solid var(--bd);transition:.2s}.bs div:hover{border-color:#2dd4bf66}.bs small{display:block;color:var(--mut);font-size:11px;letter-spacing:.08em}.bs b{font:700 20px 'JetBrains Mono',monospace}
+.con{height:320px;overflow:auto;background:#04141a;border:1px solid var(--bd);border-radius:14px;padding:10px;font:12px/1.65 'JetBrains Mono',monospace}.bl{animation:rise .3s backwards;margin-bottom:4px}.bl i{color:#6b8f8a;font-style:normal}.bl.TX{color:#fbbf24}.bl.RX{color:#22d3ee}.bl.ERR{color:#f87171}
+.bl b{padding:1px 4px;border-radius:5px;font-weight:500;cursor:help}.bl .a{background:#a78bfa33}.bl .f{background:#fbbf2426}.bl .d{background:#22d3ee22}.bl .c{background:#ffffff14;color:#9fe8c8}.bl em{display:block;padding-left:20px;color:#8fb3ad;font-style:normal;font-size:11px}
+.lgd{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px;font-size:11px;color:var(--mut)}.lgd b{padding:1px 6px;border-radius:5px;font-weight:500}.lgd .tabs{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="w">
+<header class="card hd"><div class="lg">🍄</div><div><h1>HMI · Hệ thống điều khiển Nhà nấm</h1><p></p></div>
+<div class="hr"><span class="clk" id="clk">--:--:--</span><span class="pill" id="pc"><i></i><b id="cn">Đang kết nối…</b></span><span class="pill" id="sim" hidden>▶ Demo Mode</span></div></header>
+<div id="bn">⚠ CẢNH BÁO: nhà kính quá nhiệt hoặc mất cảm biến</div>
+
+<div class="row r3">
+<div class="card m"><div class="ic">🌡️</div><div><div class="lb">Nhiệt độ · SHT20</div><div class="v" id="vt"><b>--.-</b><span>°C</span></div><div class="sb" id="st">chờ dữ liệu…</div></div><svg class="ring" viewBox="0 0 80 80"><circle class="rb" cx="40" cy="40" r="32"/><circle class="rf" id="rt" cx="40" cy="40" r="32" transform="rotate(-90 40 40)"/></svg></div>
+<div class="card m"><div class="ic">💧</div><div><div class="lb">Độ ẩm · SHT20</div><div class="v" id="vh"><b>--.-</b><span>%</span></div><div class="sb" id="sh">chờ dữ liệu…</div></div><svg class="ring" viewBox="0 0 80 80"><circle class="rb" cx="40" cy="40" r="32"/><circle class="rf" id="rh" cx="40" cy="40" r="32" transform="rotate(-90 40 40)"/></svg></div>
+<div class="card"><div class="ch"><b>📈 Xu hướng</b><div class="tabs" id="tabs"><button data-h="1">1 giờ</button><button data-h="6" class="act">6 giờ</button><button data-h="24">24 giờ</button><button data-h="168">7 ngày</button></div>
+<div class="lg2"><span><i style="background:var(--t)"></i>Nhiệt độ °C</span><span><i style="background:var(--h)"></i>Độ ẩm %</span></div></div><canvas id="cv"></canvas></div>
+</div>
+
+<div class="sec">Sơ đồ dòng dữ liệu &amp; kết nối thiết bị</div>
+<div class="card dg"><svg id="dg" viewBox="0 0 1180 430">
+<defs><filter id="gl"><feGaussianBlur stdDeviation="6"/></filter></defs>
+<polygon class="bx" points="130,56 30,146 230,146"/><rect class="bx" x="40" y="146" width="180" height="172"/>
+<rect x="62" y="268" width="136" height="40" rx="8" fill="#6b5b3a55"/><text x="130" y="297" text-anchor="middle" font-size="21">🍄 🍄 🍄 🍄</text>
+<rect x="72" y="178" width="116" height="70" rx="12" fill="#0b2a2c" stroke="#34d399" stroke-width="1.6"/><circle class="led" id="l-s" cx="176" cy="190" r="4"/>
+<text x="130" y="212" text-anchor="middle" class="tm" id="sv">--.-°C · --.-%</text><text x="130" y="234" text-anchor="middle" class="t1">SHT20</text>
+<text x="130" y="352" text-anchor="middle" class="t1">🏠 NHÀ NẤM (Vòm trồng)</text>
+<path class="bus" d="M188 213 H372"/><text x="280" y="200" text-anchor="middle" class="ss">Modbus RTU · RS-485</text><text x="280" y="236" text-anchor="middle" class="ss">9600 8N1 · Slave 1</text>
+<rect class="bx" x="372" y="110" width="250" height="226" rx="18"/><line x1="392" y1="134" x2="440" y2="134" stroke="#ffffff30" stroke-width="3"/><line x1="392" y1="146" x2="428" y2="146" stroke="#ffffff30" stroke-width="3"/>
+<text x="560" y="138" class="ss" text-anchor="end">RUN</text><circle class="led" id="l-run" cx="582" cy="134" r="5"/><text x="560" y="158" class="ss" text-anchor="end">COM</text><circle class="led" id="l-com" cx="582" cy="154" r="5"/>
+<rect x="396" y="176" width="202" height="84" rx="10" fill="#07151a" stroke="#ffffff1c"/><text x="412" y="206" class="tm" id="pt2">TEMP --.- °C</text><text x="412" y="236" class="tm" id="ph2">HUM --.- %</text>
+<text x="497" y="292" text-anchor="middle" class="t1">🖥️ PC Master · Python</text><text x="497" y="312" text-anchor="middle" class="ss">poll slave mỗi 2 s · USB-RS485</text>
+<path class="bus b2" d="M622 236 H720"/><text x="671" y="224" text-anchor="middle" class="ss">RS-485</text><text x="671" y="254" text-anchor="middle" class="ss">addr 0xFF</text>
+<rect class="bx" x="660" y="14" width="220" height="62" rx="14"/><text x="770" y="40" text-anchor="middle" class="t1">🌐 HMI Dashboard</text><text x="770" y="60" text-anchor="middle" class="ss">FastAPI · :8000</text>
+<path class="bus a1" d="M660 30 C560 24 480 60 470 110"/><text x="520" y="40" class="ss">GET JSON</text><path class="bus a2" d="M660 58 C610 72 570 90 546 110"/><text x="590" y="92" class="ss">POST cmd</text>
+<rect class="bx" x="720" y="120" width="190" height="236" rx="18"/><text x="815" y="146" text-anchor="middle" class="t1">⚡ Module Relay · 4 Kênh</text>
+<g id="rows"></g>
+<g id="loads"></g>
+<text x="30" y="410" class="ss"></text>
+</svg></div>
+
+<div class="sec">Điều khiển thiết bị</div>
+<div class="row r4" id="devs"></div>
+
+<div class="row r2">
+<div class="card"><h3>⚙️ Ngưỡng cài đặt</h3><form id="form"></form></div>
+<div class="card" style="grid-column:1/-1"><div class="ch"><b>🧾 Nhật ký</b><div class="tabs"><button id="t-ev" class="act" onclick="tab('ev')">Sự kiện</button><button id="t-bus" onclick="tab('bus')">Đường truyền Modbus</button></div><a href="/api/export.csv?hours=24" style="margin-left:auto;font-size:12px">Tải CSV 24h</a></div>
+<ul id="ev"></ul>
+<div id="bus" style="display:none"><div class="bs"><div><small>VÒNG POLL</small><b id="b-p">–</b></div><div><small>ĐỘ TRỄ RTT</small><b id="b-r">–</b></div><div><small>TỶ LỆ OK</small><b id="b-o">–</b></div></div>
+<div class="lgd"><span id="b-i">RS-485</span><b class="a">Slave</b><b class="f">Hàm</b><b class="d">Dữ liệu</b><b class="c">CRC</b><span class="tabs"><button id="b-m" onclick="BIN=!BIN;$('#b-m').textContent=BIN?'BIN':'HEX';$('#con').innerHTML='';BID=0">HEX</button><button id="b-z" onclick="PAUSE=!PAUSE;$('#b-z').textContent=PAUSE?'Tiếp tục':'Tạm dừng'">Tạm dừng</button></span></div>
+<div class="con" id="con"></div><div class="sb" style="margin-top:6px">Mỗi byte truyền 10 bit: 1 start (0) + 8 bit dữ liệu (LSB trước) + 1 stop (1). Rê chuột vào từng byte để xem tên trường.</div></div></div>
+</div>
+</div>
+<div id="err"></div><div id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),NS='http://www.w3.org/2000/svg';
+let KEY=localStorage.getItem('gh_key')||'',HRS=6,ST=null,fi=false;
+const D=[['fan','🌀','QUẠT','Quạt làm mát',180,68,934],['mist','💧','PHUN SƯƠNG','Phun sương',224,168,946],['heater','🔥','SƯỞI','Sưởi halogen',268,268,0],['alarm','🚨','ĐÈN BÁO','Đèn cảnh báo',312,368,934]];
+const FLD=[['temp_min','Nhiệt độ thấp (bật sưởi) °C'],['temp_max','Nhiệt độ cao (quạt + phun) °C'],['temp_alarm','Nhiệt độ cảnh báo °C'],['hum_min','Độ ẩm thấp (phun) %'],['hum_max','Độ ẩm cao (quạt hút) %']];
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),2500)}
+async function api(p,o={}){
+  const c=new AbortController(),t=setTimeout(()=>c.abort(),4000);o.signal=c.signal;o.headers={'Content-Type':'application/json',...(KEY?{'X-API-Key':KEY}:{})};
+  try{const r=await fetch(p,o);
+    if(r.status===401){KEY=prompt('Nhập khóa điều khiển (API key):')||'';localStorage.setItem('gh_key',KEY);if(KEY){clearTimeout(t);return api(p,o)}}
+    if(!r.ok){let m=r.status;try{m=(await r.json()).detail}catch(e){}throw new Error(m)}
+    return await r.json()}finally{clearTimeout(t)}
+}
+function el(h){const g=document.createElementNS(NS,'g');g.innerHTML=h;return g}
+// ---- dựng sơ đồ động và thẻ điều khiển ----
+D.forEach(([k,ic,rn,nm,ry,ly,vx],i)=>{
+  const y=162+i*44;
+  $('#rows').appendChild(el(`<rect class="bx" x="736" y="${y}" width="158" height="36" rx="9"/><circle class="led" id="rl-${k}" cx="754" cy="${y+18}" r="5"/><text id="rk-${k}" x="770" y="${y+22}" class="nn">K? · ${rn}</text>`));
+  const x=1026,c=ly,top=c-38;let icon='';
+  if(k=='fan')icon=`<circle class="rg" cx="${x}" cy="${c}" r="24"/><g class="bl"><g transform="translate(${x} ${c})"><ellipse rx="5" ry="13" cy="-13"/><ellipse rx="5" ry="13" cy="-13" transform="rotate(90)"/><ellipse rx="5" ry="13" cy="-13" transform="rotate(180)"/><ellipse rx="5" ry="13" cy="-13" transform="rotate(270)"/></g></g><circle cx="${x}" cy="${c}" r="4" fill="#e2e8f0"/>`;
+  if(k=='mist')icon=`<rect class="mc" x="${x-18}" y="${c+4}" width="36" height="18" rx="4"/><circle class="mp" cx="${x-10}" cy="${c}" r="3"/><circle class="mp" cx="${x}" cy="${c-2}" r="3"/><circle class="mp" cx="${x+10}" cy="${c}" r="3"/>`;
+  if(k=='heater')icon=`<circle class="hg" cx="${x}" cy="${c}" r="26" filter="url(#gl)"/><circle class="bulb" cx="${x}" cy="${c}" r="14"/><path d="M${x-6} ${c+3} l3 -7 l3 7 l3 -7 l3 7" fill="none" stroke="#0006" stroke-width="1.5"/>`;
+  if(k=='alarm')icon=`<circle class="rg" cx="${x}" cy="${c}" r="22"/><circle class="al" cx="${x}" cy="${c}" r="12"/>`;
+  $('#loads').appendChild(el(`<path class="wr" id="ln-${k}" d="${vx?`M894 ${ry} H${vx} V${c} H990`:`M894 ${ry} H990`}"/>`));
+  $('#loads').appendChild(el(`<g class="ld" id="ld-${k}"><rect class="bx" x="990" y="${top}" width="170" height="76" rx="16"/>${icon}<text x="1058" y="${c-3}" class="nn">${nm}</text><text id="ls-${k}" x="1058" y="${c+15}" class="ss">tắt</text></g>`).firstChild);
+});
+$('#devs').innerHTML=D.map(([k,ic],i)=>`<div class="card dv" id="d-${k}" style="animation-delay:${i*.07}s"><div class="tp"><div class="ic">${ic}</div><div style="flex:1;min-width:0"><div class="nm"></div><div class="sb"></div></div><button class="sw" aria-label="bật/tắt"></button></div><div class="seg"><button data-m="auto">Tự động</button><button data-m="manual">Thủ công</button></div></div>`).join('');
+D.forEach(([k])=>{const c=$('#d-'+k);
+  c.querySelector('.sw').onclick=()=>cmd(k,{mode:'manual',state:!ST.devices[k].state});
+  c.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>cmd(k,b.dataset.m=='auto'?{mode:'auto'}:{mode:'manual',state:ST.devices[k].state}))});
+async function cmd(k,b){try{await api('/api/devices/'+k,{method:'POST',body:JSON.stringify(b)});refresh()}catch(e){toast('Lỗi: '+e.message)}}
+// ---- hiển thị ----
+function zone(v,lo,hi,al,u){if(v==null)return['chờ dữ liệu…','var(--mut)'];if(al!=null&&v>=al)return['Quá nhiệt!','var(--bad)'];
+  if(v<lo)return[`Thấp hơn vùng ${lo}–${hi} ${u}`,'var(--h)'];if(v>hi)return[`Cao hơn vùng ${lo}–${hi} ${u}`,'var(--t)'];return[`Trong vùng lý tưởng ${lo}–${hi} ${u}`,'var(--ok)']}
+function setV(id,v){const b=$(id).firstChild,n=v==null?'--.-':v.toFixed(1);if(b.textContent!=n){b.textContent=n;b.classList.remove('tick');void b.offsetWidth;b.classList.add('tick')}}
+function ring(id,v,mn,mx,c){const f=v==null?0:Math.max(0,Math.min(1,(v-mn)/(mx-mn)));const e=$(id);e.style.strokeDashoffset=201*(1-f);e.style.stroke=c}
+function led(id,c){$(id).setAttribute('class','led '+c)}
+function status(on,msg){
+  document.body.classList.toggle('off',!on);$('#dg').classList.toggle('disc',!on);
+  const hw=on&&ST&&ST.sensor_ok;$('#pc').classList.toggle('bad',!hw);
+  $('#cn').textContent=!on?'Mất kết nối':(hw?'Đang hoạt động':'Mất cảm biến');
+  const e=$('#err');e.textContent=msg||'';e.classList.toggle('show',!!msg);
+  led('#l-run',on?'ok':'bad');led('#l-com',hw?'ok':'bad');led('#l-s',hw?'ok':'bad')}
+function render(s){
+  const S=s.settings,T=s.temperature,H=s.humidity;
+  setV('#vt',T);setV('#vh',H);
+  const a=zone(T,S.temp_min,S.temp_max,S.temp_alarm,'°C'),b=zone(H,S.hum_min,S.hum_max,null,'%');
+  $('#st').textContent=a[0];$('#st').style.color=a[1];$('#sh').textContent=b[0];$('#sh').style.color=b[1];
+  ring('#rt',T,0,50,a[1]);ring('#rh',H,0,100,b[1]);
+  $('#sv').textContent=T==null?'--.-°C · --.-%':`${T.toFixed(1)}°C · ${H.toFixed(1)}%`;
+  $('#pt2').textContent=`TEMP ${T==null?'--.-':T.toFixed(1)} °C`;$('#ph2').textContent=`HUM ${H==null?'--.-':H.toFixed(1)} %`;
+  $('#sim').hidden=!s.simulate;$('#bn').style.display=s.alarm?'block':'none';
+  D.forEach(([k,,rn])=>{const d=s.devices[k],c=$('#d-'+k);
+    c.classList.toggle('on',d.state);c.querySelector('.nm').textContent=d.label;
+    c.querySelector('.sb').textContent=`CH${d.channel} · ${d.state?'ĐANG BẬT':'đang tắt'}`+(d.source=='safety'?' · khóa an toàn':'');
+    c.querySelector('.sw').classList.toggle('on',d.state);c.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('act',x.dataset.m==d.mode));
+    $('#ld-'+k).classList.toggle('on',d.state);$('#ln-'+k).classList.toggle('on',d.state);$('#ls-'+k).textContent=d.state?'ĐANG BẬT':'tắt';
+    led('#rl-'+k,d.state?'ok':'');$('#rk-'+k).textContent=`K${d.channel} · ${rn}`});
+  if(!fi){$('#form').innerHTML=FLD.map(([k,l])=>`<label>${l}</label><input type="number" step="0.5" name="${k}" value="${S[k]}">`).join('')+'<button class="btn" type="submit">Lưu ngưỡng</button>';fi=true}
+}
+async function refresh(){
+  try{const s=await api('/api/status');ST=s;render(s);status(true,s.sensor_ok?'':'⚠ Mất kết nối phần cứng — kiểm tra cáp RS-485 / cảm biến SHT20')}
+  catch(e){status(false,'⚠ Mất kết nối máy chủ — kiểm tra backend tại '+location.host)}
+}
+$('#form').addEventListener('submit',async e=>{e.preventDefault();const b={};new FormData(e.target).forEach((v,k)=>b[k]=parseFloat(v));
+  try{await api('/api/settings',{method:'PUT',body:JSON.stringify(b)});toast('Đã lưu ngưỡng');refresh()}catch(x){toast('Lỗi: '+x.message)}});
+// ---- biểu đồ ----
+function chart(r){
+  const c=$('#cv'),d=devicePixelRatio||1,w=c.clientWidth,h=230;c.width=w*d;c.height=h*d;const g=c.getContext('2d');g.scale(d,d);g.clearRect(0,0,w,h);g.font='11px JetBrains Mono,monospace';
+  if(r.length<2){g.fillStyle='#8fb3ad';g.fillText('Chưa đủ dữ liệu lịch sử (backend ghi 1 điểm mỗi 30 giây)',16,40);return}
+  const L=36,R=36,T=10,B=24,pw=w-L-R,ph=h-T-B,t0=r[0].ts,t1=r[r.length-1].ts;
+  const ex=k=>{let a=Math.min(...r.map(x=>x[k])),b=Math.max(...r.map(x=>x[k]));if(b-a<4){a-=2;b+=2}return[Math.floor(a),Math.ceil(b)]};
+  const[ta,tb]=ex('temp'),[ha,hb]=ex('hum');
+  for(let i=0;i<=4;i++){const y=T+ph*i/4;g.strokeStyle='#ffffff12';g.beginPath();g.moveTo(L,y);g.lineTo(L+pw,y);g.stroke();
+    g.fillStyle='#fbbf68';g.textAlign='right';g.fillText((tb-(tb-ta)*i/4).toFixed(0),L-6,y+4);g.fillStyle='#5ccbff';g.textAlign='left';g.fillText((hb-(hb-ha)*i/4).toFixed(0),L+pw+6,y+4)}
+  g.fillStyle='#8fb3ad';g.textAlign='center';for(let i=0;i<=4;i++)g.fillText(new Date((t0+(t1-t0)*i/4)*1000).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}),L+pw*i/4,h-6);
+  const ln=(k,a,b,col)=>{g.strokeStyle=col;g.lineWidth=2.2;g.lineJoin='round';g.beginPath();r.forEach((x,i)=>{const X=L+pw*(x.ts-t0)/(t1-t0||1),Y=T+ph*(1-(x[k]-a)/(b-a));i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke()};
+  ln('temp',ta,tb,'#fbbf68');ln('hum',ha,hb,'#5ccbff')}
+async function hist(){try{chart(await api('/api/history?hours='+HRS))}catch(e){}}
+async function events(){try{const r=await api('/api/events?limit=8');$('#ev').innerHTML=r.map(e=>`<li><span>${new Date(e.ts*1000).toLocaleString('vi-VN')}</span>${e.msg}</li>`).join('')}catch(e){}}
+$('#tabs').onclick=e=>{if(e.target.dataset.h){HRS=+e.target.dataset.h;document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('act',b==e.target));hist()}};
+addEventListener('resize',hist);
+setInterval(()=>$('#clk').textContent=new Date().toLocaleTimeString('vi-VN',{hour12:false}),1000);
+refresh();hist();events();setInterval(refresh,2000);setInterval(hist,30000);setInterval(events,10000);
+
+// ---- giám sát đường truyền Modbus ----
+let TAB='ev',BID=0,BIN=false,PAUSE=false;
+function tab(t){TAB=t;$('#t-ev').classList.toggle('act',t=='ev');$('#t-bus').classList.toggle('act',t=='bus');$('#ev').style.display=t=='ev'?'':'none';$('#bus').style.display=t=='bus'?'':'none';if(t=='bus')busPoll()}
+const bn=h=>h.split(' ').map(x=>isNaN(parseInt(x,16))?x:parseInt(x,16).toString(2).padStart(8,'0')).join(' ');
+function bline(f){const t=new Date(f.ts*1000),ts=t.toLocaleTimeString('vi-VN',{hour12:false})+'.'+String(t.getMilliseconds()).padStart(3,'0');
+  if(f.dir=='ERR')return`<div class="bl ERR"><i>[${ts}]</i> ✖ ${f.text}</div>`;
+  const fl=f.fields.map((x,i)=>`<b class="${i==0?'a':i==1?'f':x[0]=='CRC'?'c':'d'}" title="${x[0]}">${BIN?bn(x[1]):x[1]}</b>`).join(' ');
+  return`<div class="bl ${f.dir}"><i>[${ts}]</i> ${f.dir=='TX'?'TX ▶':'RX ◀'} ${fl}<em>${f.text}${f.rtt!=null?' · RTT '+f.rtt+' ms':''} · ${f.bits} bit · ${f.ms} ms @ ${BAUD}</em></div>`}
+let BAUD='';
+async function busPoll(){if(TAB!='bus'||PAUSE)return;
+  try{const r=await api('/api/bus?after='+BID),st=r.stats,c=$('#con');BAUD=st.baud+' baud';
+    if(st.last_id<BID){c.innerHTML='';BID=0}
+    $('#b-p').textContent=st.polls;$('#b-r').textContent=st.rtt_avg==null?'–':Math.round(st.rtt_avg)+' ms';$('#b-o').textContent=st.rate==null?'–':st.rate+'%';
+    $('#b-i').textContent=`${st.port} · ${st.baud} 8N1 · TX ${st.tx_bytes} B · RX ${st.rx_bytes} B`;
+    if(r.frames.length){const bot=c.scrollTop+c.clientHeight>=c.scrollHeight-30;c.insertAdjacentHTML('beforeend',r.frames.map(bline).join(''));BID=st.last_id;
+      while(c.children.length>150)c.firstChild.remove();if(bot)c.scrollTop=c.scrollHeight}}catch(e){}}
+setInterval(busPoll,1000);
+</script>
+</body>
+</html>
